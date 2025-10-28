@@ -2,6 +2,7 @@ package main
 
 import (
 	"api_ticketing_web/config"
+	"api_ticketing_web/model"
 	"api_ticketing_web/routes"
 	"log"
 
@@ -14,6 +15,8 @@ func main() {
 	}
 	
 	config.ConnectDatabase()
+	config.DB.AutoMigrate(&model.User{},&model.Status{},&model.Priority{},&model.Category{})
+	
 	r := routes.SetupRoute()
 	r.Run(":8080")
 }
