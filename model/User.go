@@ -8,6 +8,18 @@ type User struct {
 	Email     string `gorm:"unique" json:"email"`
 	Password  string `json:"-"`
 	Role      string `json:"role"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
+	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
+}
+
+type UserForm struct{
+	Name string `form:"name"`
+	Email string `form:"email"`
+	Password string `form:"password"`
+	Role string `form:"role"`
+}
+
+type LoginForm struct{
+	Email string `form:"email"`
+	Password string `form:"password"`
 }
