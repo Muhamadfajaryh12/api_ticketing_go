@@ -9,33 +9,36 @@ import (
 )
 
 func InsertStatus(c *gin.Context) {
-	var status model.StatusForm
+	var statusForm model.StatusForm
+	var status model.Status
 
-	if err := c.ShouldBind(&status); err != nil{
+	if err := c.ShouldBind(&statusForm); err != nil{
 		c.JSON(http.StatusBadRequest,gin.H{"error":err.Error()})
 		return
 	}
 
-	if err := config.DB.Create(&status); err != nil{
-		c.JSON(http.StatusInternalServerError,gin.H{"error":err})
+	status.Status = statusForm.Status
+	if err := config.DB.Create(&status).Error; err != nil{
+		c.JSON(http.StatusInternalServerError,gin.H{"error":err.Error()})
 		return
 	}
 	
 	c.JSON(http.StatusCreated,gin.H{
-		"status":true,
+		"status":"success",
+		"message":"Berhasil membuat Status",
 	})
 }
 
 func GetStatus(c *gin.Context){
 	var status []model.Status
 
-	if err := config.DB.Find(&status); err != nil{
-			c.JSON(http.StatusInternalServerError,gin.H{"error":err})
+	if err := config.DB.Find(&status).Error; err != nil{
+			c.JSON(http.StatusInternalServerError,gin.H{"error":err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusCreated,gin.H{
-		"status":true,
+		"status":"success",
 		"data":status,
 	})
 }

@@ -9,28 +9,31 @@ import (
 )
 
 func InsertPriority(c *gin.Context){
-	var priority  model.PriorityForm
+	var priorityForm  model.PriorityForm
+	var priority model.Priority
 
-	if err:= c.ShouldBind(&priority); err != nil {
+	if err:= c.ShouldBind(&priorityForm); err != nil {
 		c.JSON(http.StatusBadRequest,gin.H{"error":err.Error()})
 		return
 	}
 
-	if err := config.DB.Create(&priority); err != nil {
-		c.JSON(http.StatusInternalServerError,gin.H{"error":err})
+	priority.Priority = priorityForm.Priority
+	if err := config.DB.Create(&priority).Error; err != nil {
+		c.JSON(http.StatusInternalServerError,gin.H{"error":err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusCreated,gin.H{
-		"success":true,
+		"status":"success",
+		"message":"Berhasil membuat Priority",
 	})
 }
 
 func GetPriority(c *gin.Context){
 	var priority []model.Priority
 
-	if err := config.DB.Find(&priority); err != nil{
-		c.JSON(http.StatusInternalServerError,gin.H{"error":err})
+	if err := config.DB.Find(&priority).Error; err != nil{
+		c.JSON(http.StatusInternalServerError,gin.H{"error":err.Error()})
 		return
 	}
 	

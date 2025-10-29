@@ -18,6 +18,10 @@ func SetupRoute() *gin.Engine {
 	PriorityRoute.POST("/",controllers.InsertPriority)
 	PriorityRoute.GET("/",controllers.GetPriority)
 
+	StatusRoute := api.Group("/status")
+	StatusRoute.POST("/",controllers.InsertStatus)
+	StatusRoute.GET("/",controllers.GetStatus)
+	
 	UserRoute :=api.Group("/user")
 	UserRoute.POST("/register",controllers.Register)
 	UserRoute.POST("/login",controllers.Login)
