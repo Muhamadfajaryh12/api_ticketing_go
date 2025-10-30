@@ -21,4 +21,18 @@ type TicketForm struct {
 	CategoryID  uint   `form:"category_id"`
 	PriorityID  uint   `form:"priority_id"`
 	StatusID    uint   `form:"status_id"`
+	AssignedID *uint `form:"assigned_id"`
+}
+
+type TicketResponse struct {
+	ID          uint      `json:"id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	User        string    `json:"user"`       
+	Assigned    *string   `json:"assigned"`   
+	Category    string    `json:"category"`
+	Priority    string    `json:"priority"`
+	Status      string    `json:"status"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }

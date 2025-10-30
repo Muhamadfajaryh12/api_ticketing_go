@@ -91,6 +91,7 @@ func Login(c *gin.Context){
 		"user_id" : user.ID,
 		"name":user.Name,
 		"exp":time.Now().Add(time.Hour * 48).Unix(),
+		"role":user.Role,
 	})
 
 	tokenString, err := token.SignedString([]byte(secret)); 

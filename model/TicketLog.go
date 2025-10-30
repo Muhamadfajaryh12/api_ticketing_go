@@ -6,7 +6,7 @@ type TicketLog struct {
 	ID       uint      `gorm:"primaryKey" json:"id"`
 	TicketID uint      `json:"ticket_id"`
 	StatusID uint `json:"status_id"`
-	StatusAt time.Time `json:"status_at"`
+	StatusAt time.Time `gorm:"autoCreateTime" json:"status_at"`
 }
 
 type TicketLogForm struct{

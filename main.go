@@ -15,7 +15,7 @@ func main() {
 	}
 	
 	config.ConnectDatabase()
-	config.DB.AutoMigrate(&model.User{},&model.Status{},&model.Priority{},&model.Category{})
+	config.DB.AutoMigrate(&model.User{},&model.Status{},&model.Priority{},&model.Category{},&model.Ticket{},&model.TicketLog{})
 	
 	r := routes.SetupRoute()
 	r.Run(":8080")

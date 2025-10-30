@@ -32,6 +32,12 @@ func Authorization() gin.HandlerFunc{
 			return
 		}
 		
+		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			c.Set("user_id", claims["user_id"])
+			c.Set("name", claims["name"])
+			c.Set("role",claims["role"])
+		}
+
 		c.Next()
 	}
 }

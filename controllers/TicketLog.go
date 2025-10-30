@@ -7,7 +7,7 @@ import (
 
 func InsertTicketLog( ticketID uint, statusID uint) error {
 
-	ticketLog := model.TicketLogForm{
+	ticketLog := model.TicketLog{
 		TicketID: ticketID,
 		StatusID: statusID,
 	}

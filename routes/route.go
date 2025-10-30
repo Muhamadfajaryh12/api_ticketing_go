@@ -2,6 +2,7 @@ package routes
 
 import (
 	"api_ticketing_web/controllers"
+	"api_ticketing_web/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,5 +27,10 @@ func SetupRoute() *gin.Engine {
 	UserRoute.POST("/register",controllers.Register)
 	UserRoute.POST("/login",controllers.Login)
 
+	
+	TicketRoute := api.Group("/ticket",middleware.Authorization())
+	TicketRoute.GET("/",controllers.GetTicket)
+	TicketRoute.POST("/",controllers.InsertTicket)
+	TicketRoute.PATCH("/:id",controllers.UpdateTicket)
 	return r
 }
