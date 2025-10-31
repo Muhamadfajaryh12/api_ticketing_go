@@ -32,5 +32,11 @@ func SetupRoute() *gin.Engine {
 	TicketRoute.GET("/",controllers.GetTicket)
 	TicketRoute.POST("/",controllers.InsertTicket)
 	TicketRoute.PATCH("/:id",controllers.UpdateTicket)
+
+	TicketLogRoute := api.Group("/ticket-log",middleware.Authorization())
+	TicketLogRoute.GET("/",controllers.GetTicketLog)
+
+	ReviewRoute := api.Group("/review",middleware.Authorization())
+	ReviewRoute.POST("/",controllers.InsertReview)
 	return r
 }
