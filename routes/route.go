@@ -2,41 +2,55 @@ package routes
 
 import (
 	"api_ticketing_web/controllers"
-	"api_ticketing_web/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoute() *gin.Engine {
-	r:=gin.Default()
+func SetupRoute(r *gin.Engine) {
+
 	api := r.Group("/api")
+{
 
-	CategoryRoute := api.Group("/category")
-	CategoryRoute.POST("/",controllers.InsertCategory)
-	CategoryRoute.GET("/",controllers.GetCategory)
 
-	PriorityRoute := api.Group("/priority")
-	PriorityRoute.POST("/",controllers.InsertPriority)
-	PriorityRoute.GET("/",controllers.GetPriority)
+	categoryRoute := api.Group("/category")
+	{
+		categoryRoute.POST("", controllers.InsertCategory)
+		categoryRoute.GET("", controllers.GetCategory)
+	}
 
-	StatusRoute := api.Group("/status")
-	StatusRoute.POST("/",controllers.InsertStatus)
-	StatusRoute.GET("/",controllers.GetStatus)
-	
-	UserRoute :=api.Group("/user")
-	UserRoute.POST("/register",controllers.Register)
-	UserRoute.POST("/login",controllers.Login)
+	priorityRoute := api.Group("/priority")
+	{
+		priorityRoute.POST("", controllers.InsertPriority)
+		priorityRoute.GET("", controllers.GetPriority)
+	}
 
-	
-	TicketRoute := api.Group("/ticket",middleware.Authorization())
-	TicketRoute.GET("/",controllers.GetTicket)
-	TicketRoute.POST("/",controllers.InsertTicket)
-	TicketRoute.PATCH("/:id",controllers.UpdateTicket)
+	statusRoute := api.Group("/status")
+	{
+		statusRoute.POST("", controllers.InsertStatus)
+		statusRoute.GET("", controllers.GetStatus)
+	}
 
-	TicketLogRoute := api.Group("/ticket-log",middleware.Authorization())
-	TicketLogRoute.GET("/",controllers.GetTicketLog)
+	userRoute := api.Group("/user")
+	{
+		userRoute.POST("/register", controllers.Register)
+		userRoute.POST("/login", controllers.Login)
+	}
 
-	ReviewRoute := api.Group("/review",middleware.Authorization())
-	ReviewRoute.POST("/",controllers.InsertReview)
-	return r
+	ticketRoute := api.Group("/ticket")
+	{
+		ticketRoute.GET("", controllers.GetTicket)
+		ticketRoute.POST("", controllers.InsertTicket)
+		ticketRoute.PATCH("/:id", controllers.UpdateTicket)
+	}
+
+	ticketLogRoute := api.Group("/ticket-log")
+	{
+		ticketLogRoute.GET("/", controllers.GetTicketLog)
+	}
+
+	reviewRoute := api.Group("/review")
+	{
+		reviewRoute.POST("/", controllers.InsertReview)
+	}
+}
 }
