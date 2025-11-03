@@ -9,8 +9,6 @@ import (
 func SetupRoute(r *gin.Engine) {
 
 	api := r.Group("/api")
-{
-
 
 	categoryRoute := api.Group("/category")
 	{
@@ -39,6 +37,7 @@ func SetupRoute(r *gin.Engine) {
 	ticketRoute := api.Group("/ticket")
 	{
 		ticketRoute.GET("", controllers.GetTicket)
+		ticketRoute.GET("/:id",controllers.GetDetailTicket)
 		ticketRoute.POST("", controllers.InsertTicket)
 		ticketRoute.PATCH("/:id", controllers.UpdateTicket)
 	}
@@ -52,5 +51,5 @@ func SetupRoute(r *gin.Engine) {
 	{
 		reviewRoute.POST("/", controllers.InsertReview)
 	}
-}
+
 }

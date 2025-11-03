@@ -13,3 +13,9 @@ type TicketLogForm struct{
 	TicketID uint `form:"ticket_id"`
 	StatusID uint `form:"status_id"`
 }
+
+type TicketLogResponse struct{
+	ID       uint      `gorm:"primaryKey" json:"id"`
+	Status string `json:"status"`
+	StatusAt time.Time `gorm:"autoCreateTime" json:"status_at"`
+}

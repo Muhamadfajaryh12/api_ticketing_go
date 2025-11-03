@@ -22,6 +22,8 @@ func main() {
 		AllowCredentials: true,
 	}))
 
+	// r.Use(cors.Default())
+
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error Loading env")
 	}
@@ -29,7 +31,7 @@ func main() {
 	config.ConnectDatabase()
 	config.DB.AutoMigrate(&model.User{},&model.Status{},&model.Priority{},&model.Category{},&model.Ticket{},&model.TicketLog{})
 
-	routes.SetupRoute(r)
+	routes.SetupRoute(r) 
 	
 	r.Run("localhost:8081")
 }
