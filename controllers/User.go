@@ -111,3 +111,26 @@ func Login(c *gin.Context){
 
 }
 
+func GetTeknisi(c *gin.Context){
+	var teknisi []model.User
+
+	if err := config.DB.Where("role = ?","teknisi").Find(&teknisi).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status":"error","error":err.Error()})
+		return 
+	}
+
+	var response []model.UserResponse
+
+	for _, data := range teknisi{
+		response = append(response, model.UserResponse{
+			ID: data.ID,
+			Name: data.Name,
+			Email: data.Email,
+			Role: data.Role,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status":"success","data":response})
+
+}
+

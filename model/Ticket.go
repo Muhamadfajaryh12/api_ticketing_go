@@ -11,8 +11,8 @@ type Ticket struct {
 	CategoryID  uint   `json:"category_id"`
 	PriorityID  uint   `json:"priority_id"`
 	StatusID    uint   `json:"status_id"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt   time.Time `json:"created_at" gorm:"autoCreateTime"`
+	UpdatedAt time.Time `json:"updated_at" gorm:"autoCreateTime"`
 }
 
 type TicketForm struct {
@@ -21,7 +21,7 @@ type TicketForm struct {
 	CategoryID  uint   `form:"category_id"`
 	PriorityID  uint   `form:"priority_id"`
 	StatusID    uint   `form:"status_id"`
-	AssignedID *uint `form:"assigned_id"`
+	AssignedID *uint 	`form:"assigned_id"`
 }
 
 type TicketResponse struct {

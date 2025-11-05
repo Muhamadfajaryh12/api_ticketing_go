@@ -23,3 +23,10 @@ type LoginForm struct{
 	Email string `form:"email"`
 	Password string `form:"password"`
 }
+
+type UserResponse struct{
+	ID uint `json:"id"`
+	Name string `json:"name"`
+	Email string `json:"email"`
+	Role string `json:"role"`
+}
