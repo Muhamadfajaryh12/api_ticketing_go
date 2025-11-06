@@ -35,6 +35,18 @@ func InsertReview(c *gin.Context) {
 		return
 	}
 
+	if err := config.DB.Model(&model.Ticket{}).
+		Where("id = ?", review.TicketID).
+		Update("status_id", 5).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+		return
+	}
+
+	if err:= InsertTicketLog(review.TicketID, 5); err != nil{
+		c.JSON(http.StatusInternalServerError,gin.H{"status":"error","message":err})
+		return
+	}
+
 	c.JSON(http.StatusCreated,gin.H{"status":"success","message":"Berhasil memberikan rating"})
 
 }

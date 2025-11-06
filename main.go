@@ -29,7 +29,7 @@ func main() {
 	}
 	
 	config.ConnectDatabase()
-	config.DB.AutoMigrate(&model.User{},&model.Status{},&model.Priority{},&model.Category{},&model.Ticket{},&model.TicketLog{})
+	config.DB.AutoMigrate(&model.User{},&model.Status{},&model.Priority{},&model.Category{},&model.Ticket{},&model.TicketLog{},&model.Review{})
 
 	routes.SetupRoute(r) 
 	

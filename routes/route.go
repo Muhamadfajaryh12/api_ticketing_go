@@ -49,9 +49,14 @@ func SetupRoute(r *gin.Engine) {
 		ticketLogRoute.GET("", controllers.GetTicketLog)
 	}
 
-	reviewRoute := api.Group("/review")
+	reviewRoute := api.Group("/review",middleware.Authorization())
 	{
-		reviewRoute.POST("/", controllers.InsertReview)
+		reviewRoute.POST("/:id", controllers.InsertReview)
+	}
+
+	dashboardRoute := api.Group("/dashboard")
+	{
+		dashboardRoute.GET("",controllers.GetDashhoard)
 	}
 
 }
