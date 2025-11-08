@@ -18,3 +18,20 @@ type DashboardCategoryStatusResponse struct {
 	Status      string `json:"status"`
 	TotalTicket int    `json:"total_ticket"`
 }
+
+type PerfomanceResponse struct {
+	AvgInProgress int             `json:"avg_in_progress"`
+	AvgResolved   int             `json:"avg_resolved"`
+	TeknisiTicket []TeknisiTicket `json:"teknisi_ticket"`
+	TeknisiReview []TeknisiReview `json:"teknisi_review"`
+}
+
+type TeknisiTicket struct {
+	Name        string `json:"name"`
+	TotalTicket int    `json:"total_ticket"`
+}
+
+type TeknisiReview struct {
+	Name      string `json:"name"`
+	AvgReview int    `json:"avg_review"`
+}

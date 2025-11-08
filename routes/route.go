@@ -57,6 +57,7 @@ func SetupRoute(r *gin.Engine) {
 	dashboardRoute := api.Group("/dashboard")
 	{
 		dashboardRoute.GET("",controllers.GetDashhoard)
+		dashboardRoute.GET("/performance",controllers.GetPerformance)
 	}
 
 }

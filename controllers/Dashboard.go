@@ -99,3 +99,70 @@ func GetDashhoard(c *gin.Context) {
 		"summary_category_status":categoryStatusResponse,
 	}})
 }
+
+func GetPerformance(c *gin.Context){
+	var response  model.PerfomanceResponse
+
+	queryGetAverageProgress := `
+	SELECT 
+	ROUND(AVG(TIMESTAMPDIFF(MINUTE,t1.status_at, t2.status_at))) as avg_in_progress
+	FROM ticket_logs t1
+	JOIN ticket_logs t2 ON t1.ticket_id = t2.ticket_id
+	WHERE t1.status_id = 1 AND t2.status_id = 2;
+	`
+	var avgInProgress int
+	if err := config.DB.Raw(queryGetAverageProgress).Scan(&avgInProgress).Error;err != nil{
+		c.JSON(http.StatusInternalServerError, gin.H{"status":"error", "message":err.Error()})
+		return
+	}
+	response.AvgInProgress = avgInProgress
+
+	queryGetAverageResolved := `
+	SELECT 
+	ROUND(AVG(TIMESTAMPDIFF(MINUTE,t1.status_at, t2.status_at))) as avg_resolved
+	FROM ticket_logs t1
+	JOIN ticket_logs t2 ON t1.ticket_id = t2.ticket_id
+	WHERE t1.status_id = 2 AND t2.status_id = 3;
+	`	
+	var avgResolved int
+	if err := config.DB.Raw(queryGetAverageResolved).Scan(&avgResolved).Error;err != nil{
+		c.JSON(http.StatusInternalServerError, gin.H{"status":"error", "message":err.Error()})
+		return
+	}
+	response.AvgResolved = avgResolved	
+
+	queryGetTeknisiTicket := `
+	SELECT 
+	users.name,
+	COUNT(tickets.id) AS total_ticket
+	FROM users
+	LEFT JOIN tickets ON users.id = tickets.assigned_id
+	WHERE users.role = "teknisi"
+	GROUP BY users.id, users.name;`
+
+	var teknisiTicket []model.TeknisiTicket
+	if err := config.DB.Raw(queryGetTeknisiTicket).Scan(&teknisiTicket).Error;err != nil{
+		c.JSON(http.StatusInternalServerError, gin.H{"status":"error", "message":err.Error()})
+		return
+	}
+	response.TeknisiTicket = teknisiTicket
+
+	queryGetTeknisiReview := `
+	SELECT 
+	users.name,
+	ROUND(AVG(reviews.rating)) AS avg_review
+	FROM users
+	LEFT JOIN tickets ON users.id = tickets.assigned_id
+	LEFT JOIN reviews ON tickets.id = reviews.ticket_id
+	WHERE users.role = "teknisi"
+	GROUP BY users.id, users.name;`
+
+	var TeknisiReview []model.TeknisiReview
+	if err := config.DB.Raw(queryGetTeknisiReview).Scan(&TeknisiReview).Error;err != nil{
+		c.JSON(http.StatusInternalServerError, gin.H{"status":"error", "message":err.Error()})
+		return
+	}
+
+	response.TeknisiReview = TeknisiReview
+	c.JSON(http.StatusOK, gin.H{"status":"success","data":response})
+}
