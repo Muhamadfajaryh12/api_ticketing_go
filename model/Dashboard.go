@@ -6,7 +6,10 @@ type DashboardResponse struct {
 	TotalInProgress int `json:"total_in_progress"`
 	TotalClose      int `json:"total_close"`
 }
-
+type TicketMonthResponse struct {
+	Date string `json:"date"`
+	TotalTicket int `json:"total_ticket"`
+}
 type DashboardCategoryPriorityResponse struct {
 	Category    string `json:"category"`
 	Priority    string `json:"priority"`

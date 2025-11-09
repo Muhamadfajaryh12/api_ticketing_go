@@ -78,25 +78,53 @@ func GetDashhoard(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"status":"error","message":err.Error() })
 		return
 	}
-
+	
+	groupedStatus := make(map[string][]map[string]interface{})
 	 for _, r := range categoryStatus {
-        grouped[r.Category] = append(grouped[r.Category], map[string]interface{}{
+        groupedStatus[r.Category] = append(groupedStatus[r.Category], map[string]interface{}{
             "status":        r.Status,
             "total_ticket":  r.TotalTicket,
         })
     }
 
+
 	var categoryStatusResponse []map[string]interface{}
-    for category, status := range grouped {
-        response = append(response, map[string]interface{}{
+    for category, status := range groupedStatus {
+        categoryStatusResponse = append(categoryStatusResponse, map[string]interface{}{
             "category": category,
             "status": status,
         })
     }
+
+	queryGetTicketMonth := `
+		WITH RECURSIVE date_series AS (
+		SELECT DATE_FORMAT(CURDATE(), '%Y-%m-01') AS date
+		UNION ALL
+		SELECT DATE_ADD(date, INTERVAL 1 DAY)
+		FROM date_series
+		WHERE DATE_ADD(date, INTERVAL 1 DAY) <= LAST_DAY(CURDATE())
+		)
+		SELECT 
+		ds.date,
+		COUNT(t.id) AS total_ticket
+		FROM date_series ds
+		LEFT JOIN tickets t 
+		ON DATE(t.created_at) = ds.date
+		GROUP BY ds.date
+		ORDER BY ds.date;
+	`
+
+	var ticketMonth []model.TicketMonthResponse
+
+	if err := config.DB.Raw(queryGetTicketMonth).Scan(&ticketMonth).Error; err != nil {
+		c.JSON(http.StatusInternalServerError,gin.H{"status":"error","message":err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK,gin.H{"status":"success","data":gin.H{
 		"summary_ticket":data,
 		"summary_category_priority":response,
 		"summary_category_status":categoryStatusResponse,
+		"summary_ticket_month":ticketMonth,
 	}})
 }
 
