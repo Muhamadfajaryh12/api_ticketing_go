@@ -43,7 +43,31 @@ func InsertTicket(c *gin.Context) {
         return
 	}
 
-	c.JSON(http.StatusCreated,gin.H{"status":"success","message":"Berhasil membuat Ticket"})
+	var ticketing model.TicketResponse
+
+	query := `SELECT 
+		tickets.id,
+		tickets.title,
+		tickets.description,
+		user.name as user, 
+		assigned.name as assigned,
+		categories.category,
+		priorities.priority,
+		statuses.status
+		FROM tickets
+		LEFT JOIN users as user ON tickets.user_id = user.id
+		LEFT JOIN users as assigned ON tickets.assigned_id = assigned.id
+		LEFT JOIN categories ON  tickets.category_id =  categories.id
+		LEFT JOIN priorities ON tickets.priority_id =  priorities.id
+		LEFT JOIN statuses ON  tickets.status_id= statuses.id
+		WHERE tickets.id = ?
+		`
+	if err := config.DB.Raw(query,ticket.ID).Scan(&ticketing).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status":"error","message":err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated,gin.H{"status":"success","message":"Berhasil membuat Ticket","data":ticketing})
 }
 
 func GetTicket( c* gin.Context){
@@ -65,6 +89,7 @@ func GetTicket( c* gin.Context){
 		LEFT JOIN categories ON  tickets.category_id =  categories.id
 		LEFT JOIN priorities ON tickets.priority_id =  priorities.id
 		LEFT JOIN statuses ON  tickets.status_id= statuses.id
+		ORDER BY tickets.id DESC	
 		`).Scan(&ticket).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status":"error","message":err.Error()})
 		return
@@ -88,7 +113,8 @@ func GetDetailTicket ( c*gin.Context){
 		priorities.priority,
 		statuses.status,
 		tickets.category_id, 
-		tickets.priority_id
+		tickets.priority_id,
+		tickets.assigned_id
 	FROM tickets
 	LEFT JOIN users AS user ON tickets.user_id = user.id
 	LEFT JOIN users AS assigned ON tickets.assigned_id = assigned.id
@@ -129,6 +155,7 @@ func GetDetailTicket ( c*gin.Context){
 		CategoryID:  uint(ticket.CategoryID),
 		Priority:    ticket.Priority,
 		PriorityID:  uint(ticket.PriorityID),
+		AssignedID:  uint(ticket.AssignedID),
 		Status:      ticket.Status,
 		CreatedAt:   ticket.CreatedAt,
 		UpdatedAt:   ticket.UpdatedAt,
