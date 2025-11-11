@@ -3,6 +3,7 @@ package controllers
 import (
 	"api_ticketing_web/config"
 	"api_ticketing_web/model"
+	"api_ticketing_web/services"
 	"net/http"
 	"strconv"
 
@@ -47,6 +48,12 @@ func InsertReview(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated,gin.H{"status":"success","message":"Berhasil memberikan rating"})
+
+	ticketDetail, err := services.GetDetailTicket(uint(idUint));
+	if err != nil {
+		c.JSON(http.StatusInternalServerError,gin.H{"status":"error","message":err})
+		return
+	}
+	c.JSON(http.StatusCreated,gin.H{"status":"success","message":"Berhasil memberikan rating","data":ticketDetail})
 
 }

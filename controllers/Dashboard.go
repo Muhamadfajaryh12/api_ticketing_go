@@ -192,5 +192,29 @@ func GetPerformance(c *gin.Context){
 	}
 
 	response.TeknisiReview = TeknisiReview
+
+	queryGetTeknisiAvgTime := `
+	SELECT
+	users.name,
+	ROUND(AVG(TIMESTAMPDIFF(MINUTE,t_open.status_at, t_progress.status_at))) as avg_response,
+	ROUND(AVG(TIMESTAMPDIFF(MINUTE,t_progress.status_at, t_resolved.status_at))) as avg_resolved
+	from users
+	LEFT JOIN tickets ON users.id = tickets.assigned_id
+	LEFT JOIN ticket_logs t_open ON tickets.id = t_open.ticket_id AND t_open.status_id = 1
+	LEFT JOIN ticket_logs t_progress ON tickets.id = t_progress.ticket_id AND t_progress.status_id = 2
+	LEFT JOIN ticket_logs t_resolved ON tickets.id = t_resolved.ticket_id AND t_resolved.status_id = 3
+ 	WHERE users.role = "teknisi"
+	GROUP BY users.id, users.name	
+	`
+
+	var teknisiAvgTime []model.TeknisiAvgTime
+
+	if err:= config.DB.Raw(queryGetTeknisiAvgTime).Scan(&teknisiAvgTime).Error;err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status":"error", "message":err.Error()})
+		return
+	}
+
+	response.TeknisiAvgTime = teknisiAvgTime
+
 	c.JSON(http.StatusOK, gin.H{"status":"success","data":response})
 }

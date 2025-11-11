@@ -7,8 +7,8 @@ type DashboardResponse struct {
 	TotalClose      int `json:"total_close"`
 }
 type TicketMonthResponse struct {
-	Date string `json:"date"`
-	TotalTicket int `json:"total_ticket"`
+	Date        string `json:"date"`
+	TotalTicket int    `json:"total_ticket"`
 }
 type DashboardCategoryPriorityResponse struct {
 	Category    string `json:"category"`
@@ -23,10 +23,11 @@ type DashboardCategoryStatusResponse struct {
 }
 
 type PerfomanceResponse struct {
-	AvgInProgress int             `json:"avg_in_progress"`
-	AvgResolved   int             `json:"avg_resolved"`
-	TeknisiTicket []TeknisiTicket `json:"teknisi_ticket"`
-	TeknisiReview []TeknisiReview `json:"teknisi_review"`
+	AvgInProgress  int              `json:"avg_in_progress"`
+	AvgResolved    int              `json:"avg_resolved"`
+	TeknisiTicket  []TeknisiTicket  `json:"teknisi_ticket"`
+	TeknisiReview  []TeknisiReview  `json:"teknisi_review"`
+	TeknisiAvgTime []TeknisiAvgTime `json:"teknisi_avg_time"`
 }
 
 type TeknisiTicket struct {
@@ -37,4 +38,10 @@ type TeknisiTicket struct {
 type TeknisiReview struct {
 	Name      string `json:"name"`
 	AvgReview int    `json:"avg_review"`
+}
+
+type TeknisiAvgTime struct {
+	Name        string `json:"name"`
+	AvgResponse string `json:"avg_response"`
+	AvgResolved string `json:"avg_resolved"`
 }

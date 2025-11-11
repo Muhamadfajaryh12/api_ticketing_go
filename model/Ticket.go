@@ -36,6 +36,7 @@ type TicketResponse struct {
 	PriorityID  uint    `json:"priority_id"`
 	AssignedID uint `json:"assigned_id"`
 	Status      string    `json:"status"`
+	StatusID uint `json:"status_id"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
 }
@@ -51,6 +52,7 @@ type TicketDetailResponse struct {
 	CategoryID  uint    `json:"category_id"`
 	PriorityID  uint    `json:"priority_id"`
 	AssignedID uint `json:"assigned_id"`
+	StatusID uint `json:"status_id"`
 	Status      string    `json:"status"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
