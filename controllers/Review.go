@@ -55,5 +55,24 @@ func InsertReview(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated,gin.H{"status":"success","message":"Berhasil memberikan rating","data":ticketDetail})
+}
 
+func GetReview(c *gin.Context){
+	var review []model.ReviewResponse
+
+	query := `
+	SELECT
+	reviews.id, tickets.id as ticket_id, reviews.rating, users.name
+	FROM reviews
+	JOIN tickets ON reviews.ticket_id = tickets.id
+	JOIN users ON tickets.user_id = users.id
+	ORDER BY reviews.id DESC
+	`
+
+	if err:= config.DB.Raw(query).Scan(&review).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status":"error","message":err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status":"success","data":review})
 }
