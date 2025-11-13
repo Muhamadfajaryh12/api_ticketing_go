@@ -29,7 +29,7 @@ func InsertTicket(c *gin.Context) {
 		Title: input.Title,
 		Description: input.Description,
 		CategoryID: input.CategoryID,
-		StatusID: input.StatusID,
+		StatusID: 1,
 		PriorityID: input.PriorityID,
 		UserID: uint(userIDFloat),
 	}
@@ -44,27 +44,9 @@ func InsertTicket(c *gin.Context) {
         return
 	}
 
-	var ticketing model.TicketResponse
-
-	query := `SELECT 
-		tickets.id,
-		tickets.title,
-		tickets.description,
-		user.name as user, 
-		assigned.name as assigned,
-		categories.category,
-		priorities.priority,
-		statuses.status
-		FROM tickets
-		LEFT JOIN users as user ON tickets.user_id = user.id
-		LEFT JOIN users as assigned ON tickets.assigned_id = assigned.id
-		LEFT JOIN categories ON  tickets.category_id =  categories.id
-		LEFT JOIN priorities ON tickets.priority_id =  priorities.id
-		LEFT JOIN statuses ON  tickets.status_id= statuses.id
-		WHERE tickets.id = ?
-		`
-	if err := config.DB.Raw(query,ticket.ID).Scan(&ticketing).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status":"error","message":err.Error()})
+	ticketing,err := services.GetDetailTicket(uint(ticket.ID));
+	if err != nil {
+		c.JSON(http.StatusInternalServerError,gin.H{"status":"error","message":err})
 		return
 	}
 
@@ -83,7 +65,8 @@ func GetTicket( c* gin.Context){
 		assigned.name as assigned,
 		categories.category,
 		priorities.priority,
-		statuses.status
+		statuses.status,
+		tickets.status_id
 		FROM tickets
 		LEFT JOIN users as user ON tickets.user_id = user.id
 		LEFT JOIN users as assigned ON tickets.assigned_id = assigned.id
