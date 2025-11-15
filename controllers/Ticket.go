@@ -55,9 +55,11 @@ func InsertTicket(c *gin.Context) {
 
 func GetTicket( c* gin.Context){
 	var ticket []model.TicketResponse
+	
+	userQuery := c.Query("user")
 
-	if err := config.DB.Raw(
-		`SELECT 
+	if userQuery != "" {
+		query :=`SELECT 
 		tickets.id,
 		tickets.title,
 		tickets.description,
@@ -66,15 +68,49 @@ func GetTicket( c* gin.Context){
 		categories.category,
 		priorities.priority,
 		statuses.status,
-		tickets.status_id
+		tickets.status_id,
+		tickets.priority_id,
+		tickets.category_id
 		FROM tickets
 		LEFT JOIN users as user ON tickets.user_id = user.id
 		LEFT JOIN users as assigned ON tickets.assigned_id = assigned.id
 		LEFT JOIN categories ON  tickets.category_id =  categories.id
 		LEFT JOIN priorities ON tickets.priority_id =  priorities.id
 		LEFT JOIN statuses ON  tickets.status_id= statuses.id
-		ORDER BY tickets.id DESC	
-		`).Scan(&ticket).Error; err != nil {
+		WHERE tickets.user_id = ?
+		ORDER BY tickets.id DESC`
+
+		if err := config.DB.Raw(query,userQuery).Scan(&ticket).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"status":"error","message":err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK,gin.H{"status":"success","data":ticket})
+		return
+	}
+	
+	query :=`SELECT 
+		tickets.id,
+		tickets.title,
+		tickets.description,
+		user.name as user, 
+		assigned.name as assigned,
+		categories.category,
+		priorities.priority,
+		statuses.status,
+		tickets.status_id,
+		tickets.priority_id,
+		tickets.category_id
+		FROM tickets
+		LEFT JOIN users as user ON tickets.user_id = user.id
+		LEFT JOIN users as assigned ON tickets.assigned_id = assigned.id
+		LEFT JOIN categories ON  tickets.category_id =  categories.id
+		LEFT JOIN priorities ON tickets.priority_id =  priorities.id
+		LEFT JOIN statuses ON  tickets.status_id= statuses.id
+		ORDER BY tickets.id DESC`
+	
+
+	if err := config.DB.Raw(query).Scan(&ticket).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status":"error","message":err.Error()})
 		return
 	}
