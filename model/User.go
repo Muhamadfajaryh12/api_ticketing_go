@@ -30,3 +30,10 @@ type UserResponse struct{
 	Email string `json:"email"`
 	Role string `json:"role"`
 }
+
+type TeknisiResponse struct{
+	ID uint `json:"id"`
+	Name string `json:"name"`
+	Role string `json:"role"`
+	Status string `json:"status"`
+}
