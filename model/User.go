@@ -37,3 +37,9 @@ type TeknisiResponse struct{
 	Role string `json:"role"`
 	Status string `json:"status"`
 }
+
+type GeneralResponse struct{
+	ID uint `json:"id"`
+	Name string `json:"name"`
+	Role string `json:"role"`
+}

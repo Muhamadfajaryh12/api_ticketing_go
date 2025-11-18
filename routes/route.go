@@ -11,19 +11,19 @@ func SetupRoute(r *gin.Engine) {
 
 	api := r.Group("/api")
 
-	categoryRoute := api.Group("/category")
+	categoryRoute := api.Group("/category",middleware.Authorization())
 	{
 		categoryRoute.POST("", controllers.InsertCategory)
 		categoryRoute.GET("", controllers.GetCategory)
 	}
 
-	priorityRoute := api.Group("/priority")
+	priorityRoute := api.Group("/priority",middleware.Authorization())
 	{
 		priorityRoute.POST("", controllers.InsertPriority)
 		priorityRoute.GET("", controllers.GetPriority)
 	}
 
-	statusRoute := api.Group("/status")
+	statusRoute := api.Group("/status",middleware.Authorization())
 	{
 		statusRoute.POST("", controllers.InsertStatus)
 		statusRoute.GET("", controllers.GetStatus)
@@ -33,7 +33,9 @@ func SetupRoute(r *gin.Engine) {
 	{
 		userRoute.POST("/register", controllers.Register)
 		userRoute.POST("/login", controllers.Login)
-		userRoute.GET("/teknisi",controllers.GetTeknisi)
+		userRoute.GET("/technician",controllers.GetTeknisi)
+		userRoute.GET("/general",controllers.GetGeneral)
+		userRoute.DELETE("/:id",controllers.DeleteUser)
 	}
 
 	ticketRoute := api.Group("/ticket",middleware.Authorization())
@@ -44,7 +46,7 @@ func SetupRoute(r *gin.Engine) {
 		ticketRoute.PATCH("/:id", controllers.UpdateTicket)
 	}
 
-	ticketLogRoute := api.Group("/ticket-log")
+	ticketLogRoute := api.Group("/ticket-log",middleware.Authorization())
 	{
 		ticketLogRoute.GET("", controllers.GetTicketLog)
 	}
@@ -55,7 +57,7 @@ func SetupRoute(r *gin.Engine) {
 		reviewRoute.GET("",controllers.GetReview)
 	}
 
-	dashboardRoute := api.Group("/dashboard")
+	dashboardRoute := api.Group("/dashboard",middleware.Authorization())
 	{
 		dashboardRoute.GET("",controllers.GetDashhoard)
 		dashboardRoute.GET("/performance",controllers.GetPerformance)

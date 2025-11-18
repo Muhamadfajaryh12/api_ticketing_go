@@ -50,6 +50,7 @@ func Register(c *gin.Context) {
 		Password: string(hashPassword),
 		Role:     userForm.Role,
 	}
+
 	if err := config.DB.Create(&user).Error; err != nil{
 		c.JSON(http.StatusInternalServerError,gin.H{"error":err.Error()})
 		return
@@ -68,7 +69,7 @@ func Login(c *gin.Context){
 		return
 	}
 
-	result := config.DB.Where("email = ?", userForm.Email).First(&user)
+	result := config.DB.Where("email = ?", userForm.Email).Where("is_delete = ?", 0).First(&user)
 
 	if result.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -114,19 +115,19 @@ func Login(c *gin.Context){
 func GetTeknisi(c *gin.Context){
 	var teknisi []model.TeknisiResponse
 
-
 	query := 
 	`SELECT 
 	users.id,
 	users.name, 
 	users.role,
-	CASE
-		WHEN tickets.status_id = 1 THEN "not available"
-		ELSE "available"
-	END AS status_user
+    CASE
+        WHEN COUNT(CASE WHEN tickets.status_id = 2 THEN 1 END) > 0 
+            THEN 'not available'
+        ELSE 'available'
+    END AS status
 	FROM users
-	LEFT JOIN tickets ON users.id ON tickets.assigned_id 
-	WHERE users.role = 'teknisi'
+	LEFT JOIN tickets ON users.id = tickets.assigned_id 
+	WHERE users.role = 'Technician' AND is_delete = 0
 	GROUP BY users.id
 	`
 
@@ -138,3 +139,33 @@ func GetTeknisi(c *gin.Context){
 
 }
 
+func GetGeneral(c *gin.Context){
+	var general []model.GeneralResponse
+	query := 
+	`
+	SELECT 
+	id,
+	name,
+	role
+	FROM users
+	WHERE role = "General" AND is_delete = 0
+	GROUP BY name ASC
+	`
+	if err := config.DB.Raw(query).Scan(&general).Error; err != nil{
+		c.JSON(http.StatusInternalServerError,gin.H{"status":"error","message":err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK,gin.H{"status":"success","message":"berhasil fetch","data":general})
+}
+
+func DeleteUser(c *gin.Context){
+	id := c.Param("id")
+	var user model.User
+	if err:= config.DB.Model(&user).Where("id = ?", id).Update("is_delete",1).Error; err != nil {
+		c.JSON(http.StatusInternalServerError,gin.H{"status":"error","message":err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status":"success","message":"berhasil menghapus user","data":gin.H{"id":id}})
+
+}

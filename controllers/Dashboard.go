@@ -120,11 +120,25 @@ func GetDashhoard(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError,gin.H{"status":"error","message":err.Error()})
 		return
 	}
+
+	queryTotalUsers := `
+	SELECT 
+	COUNT(CASE WHEN role = "Technician" THEN 1 END) as total_technician,
+	COUNT(CASE WHEN role = "General" THEN 1 END) as total_general
+	FROM users
+	WHERE is_delete = 0
+	`
+	var totalUsers model.DashboardTotalUsers
+	if err := config.DB.Raw(queryTotalUsers).Scan(&totalUsers).Error; err != nil{
+		c.JSON(http.StatusInternalServerError,gin.H{"status":"error","message":err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK,gin.H{"status":"success","data":gin.H{
 		"summary_ticket":data,
 		"summary_category_priority":response,
 		"summary_category_status":categoryStatusResponse,
 		"summary_ticket_month":ticketMonth,
+		"summary_users":totalUsers,
 	}})
 }
 
@@ -165,7 +179,7 @@ func GetPerformance(c *gin.Context){
 	COUNT(tickets.id) AS total_ticket
 	FROM users
 	LEFT JOIN tickets ON users.id = tickets.assigned_id
-	WHERE users.role = "teknisi"
+	WHERE users.role = "Technician"
 	GROUP BY users.id, users.name;`
 
 	var teknisiTicket []model.TeknisiTicket
@@ -182,7 +196,7 @@ func GetPerformance(c *gin.Context){
 	FROM users
 	LEFT JOIN tickets ON users.id = tickets.assigned_id
 	LEFT JOIN reviews ON tickets.id = reviews.ticket_id
-	WHERE users.role = "teknisi"
+	WHERE users.role = "Technician"
 	GROUP BY users.id, users.name;`
 
 	var TeknisiReview []model.TeknisiReview
@@ -203,7 +217,7 @@ func GetPerformance(c *gin.Context){
 	LEFT JOIN ticket_logs t_open ON tickets.id = t_open.ticket_id AND t_open.status_id = 1
 	LEFT JOIN ticket_logs t_progress ON tickets.id = t_progress.ticket_id AND t_progress.status_id = 2
 	LEFT JOIN ticket_logs t_resolved ON tickets.id = t_resolved.ticket_id AND t_resolved.status_id = 3
- 	WHERE users.role = "teknisi"
+ 	WHERE users.role = "Technician"
 	GROUP BY users.id, users.name	
 	`
 

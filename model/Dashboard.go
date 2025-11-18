@@ -10,6 +10,7 @@ type TicketMonthResponse struct {
 	Date        string `json:"date"`
 	TotalTicket int    `json:"total_ticket"`
 }
+
 type DashboardCategoryPriorityResponse struct {
 	Category    string `json:"category"`
 	Priority    string `json:"priority"`
@@ -22,6 +23,10 @@ type DashboardCategoryStatusResponse struct {
 	TotalTicket int    `json:"total_ticket"`
 }
 
+type DashboardTotalUsers struct {
+	TotalTechnician int `json:"total_technician"`
+	TotalGeneral    int `json:"total_general"`
+}
 type PerfomanceResponse struct {
 	AvgInProgress  int              `json:"avg_in_progress"`
 	AvgResolved    int              `json:"avg_resolved"`
