@@ -10,6 +10,7 @@ type User struct {
 	Role      string `json:"role"`
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
+	Is_Delete boolean `json:"is_delete"`
 }
 
 type UserForm struct{
